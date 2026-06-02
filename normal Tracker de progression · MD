@@ -1,0 +1,643 @@
+# 📋 TRACKER DE PROGRESSION - 90 JOURS PENTEST
+
+**Nom:** Alex  
+**Date de début:** [À remplir]  
+**Date prévue de fin:** [+90 jours]  
+**Niveau:** Intermédiaire-Débutant
+
+---
+
+## 📊 RÉSUMÉ DE PROGRESSION
+
+```
+Phase 1 (Sem 1-3)   : ░░░░░░░░░░ 0% [À commencer]
+Phase 2 (Sem 4-8)   : ░░░░░░░░░░ 0% [À commencer]
+Phase 3 (Sem 9-11)  : ░░░░░░░░░░ 0% [À commencer]
+Phase 4 (Sem 12-13) : ░░░░░░░░░░ 0% [À commencer]
+
+GLOBAL: 0% | Labs: 0/40 | Heures: 0/130
+```
+
+---
+
+# PHASE 1 : FONDATIONS
+
+## Semaine 1: HTTP Avancé
+
+### Jour 1-2: HTTP/HTTPS Profondeur
+- [ ] Regardé explications HTTP avancé
+- [ ] Compris TLS handshake
+- [ ] Maîtrisé les en-têtes de sécurité
+- [ ] Testé headers sur site réel
+
+**Notes personnelles:**
+```
+____________________________________________________
+____________________________________________________
+____________________________________________________
+```
+
+**Compétences acquises:**
+```
+- [ ] Expliquer HTTP vs HTTPS
+- [ ] Décrire session vs token
+- [ ] Énumérer 5+ headers de sécurité
+- [ ] Vérifier les flags de cookie (Secure, HttpOnly, SameSite)
+```
+
+---
+
+### Jour 3-4: Burp Suite Proxy Setup
+- [ ] Burp Suite installé
+- [ ] Certificat CA importé dans Firefox
+- [ ] Proxy configuré (127.0.0.1:8080)
+- [ ] Test sur http://scanme.nmap.org réussi
+
+**Problèmes rencontrés:**
+```
+____________________________________________________
+____________________________________________________
+```
+
+**Solutions:**
+```
+____________________________________________________
+____________________________________________________
+```
+
+**Compétences acquises:**
+```
+- [ ] Configurer proxy browser → Burp
+- [ ] Importer certificat Burp dans Firefox
+- [ ] Tester interceptation HTTP(S)
+- [ ] Naviguer dans Proxy → Intercept
+- [ ] Naviguer dans Proxy → Event log
+```
+
+---
+
+### Jour 5-7: Burp Suite Repeater
+- [ ] Exploré onglet Repeater
+- [ ] Modifié requêtes en live
+- [ ] Testé SQL injection sur vulnweb.com
+- [ ] Compris le concept d'injection basique
+
+**Payload testé:**
+```
+URL: https://www.vulnweb.com/artists.php?artist=
+Payload 1: artist=1'
+Réponse: ________________
+
+Payload 2: artist=1' OR '1'='1
+Réponse: ________________
+
+Payload 3: artist=1' UNION SELECT NULL, NULL, version()--
+Réponse: ________________
+```
+
+**Compétences acquises:**
+```
+- [ ] Envoyer requête à Repeater
+- [ ] Modifier paramètres
+- [ ] Analyser les réponses
+- [ ] Identifier erreurs SQL
+- [ ] Comprendre UNION-based SQLi basique
+```
+
+---
+
+### Jour 8-9: OWASP Top 10
+- [ ] Lu les 10 risques principaux
+- [ ] Compris 3+ vulnérabilités
+- [ ] Noté les définitions dans mes mots
+
+**OWASP Top 10 Resume Personal:**
+```
+1. Broken Access Control
+   Définition: ___________________________________
+   Exemple: ___________________________________
+   Comment tester: ___________________________________
+
+2. Cryptographic Failures
+   Définition: ___________________________________
+   Exemple: ___________________________________
+   Comment tester: ___________________________________
+
+3. Injection
+   Définition: ___________________________________
+   Exemple: ___________________________________
+   Comment tester: ___________________________________
+
+[... continuer pour les 7 autres]
+```
+
+---
+
+### Jour 10-11: OWASP Testing Guide
+- [ ] Compris les 4 phases de test
+- [ ] Étudié reconnaissance
+- [ ] Étudié identification
+- [ ] Étudié exploitation
+- [ ] Étudié reporting
+
+**Méthodologie OWASP résumée:**
+
+```mermaid
+RECONNAISSANCE
+    ↓ (Mapper l'app)
+IDENTIFICATION
+    ↓ (Trouver vulnérabilités)
+EXPLOITATION
+    ↓ (Confirmer impact)
+REPORTING
+    ↓ (Documenter)
+```
+
+**Compétences acquises:**
+```
+- [ ] Citer les 4 phases OWASP Testing
+- [ ] Expliquer Reconnaissance
+- [ ] Expliquer Identification
+- [ ] Expliquer Exploitation
+- [ ] Comprendre l'importance du Reporting
+```
+
+---
+
+### Jour 12-13: SQL Injection - Théorie
+- [ ] Compris le concept SQL injection
+- [ ] Identifié les 3 types (Error, Union, Blind)
+- [ ] Vu exemples vulnérable vs sécurisé
+- [ ] Noté les payloads courants
+
+**SQL Injection - Fiches personnelles:**
+
+```
+DÉFINITION:
+SQL Injection = Injecter du code SQL via un input
+
+EXEMPLE VULNÉRABLE:
+String sql = "SELECT * FROM users WHERE name = '" + input + "'";
+
+EXEMPLE SÉCURISÉ:
+String sql = "SELECT * FROM users WHERE name = ?";
+statement.setString(1, input);
+
+TYPE 1: ERROR-BASED
+Payload: ' OR 1=1 --
+Signe: Message d'erreur SQL visible
+Difficulté: ⭐ Facile
+
+TYPE 2: UNION-BASED
+Payload: ' UNION SELECT NULL, NULL, database()--
+Signe: Données supplémentaires visibles
+Difficulté: ⭐⭐ Moyen
+
+TYPE 3: BLIND (Time-based)
+Payload: ' AND SLEEP(5)--
+Signe: Temps de réponse augmente
+Difficulté: ⭐⭐⭐ Difficile
+
+FIX PRINCIPAL:
+→ Prepared Statements / Parameterized Queries
+```
+
+**Compétences acquises:**
+```
+- [ ] Expliquer SQL Injection en 2 phrases
+- [ ] Nommer les 3 types
+- [ ] Donner 1 exemple pour chaque type
+- [ ] Expliquer pourquoi c'est possible (pas d'échappement)
+- [ ] Citer la solution (prepared statements)
+```
+
+---
+
+## Semaine 2-3: Premier Lab PortSwigger
+
+### Lab #1: SQL Injection - Retrieve Hidden Data
+
+**Statut:** ⏳ En progression  
+**Lien:** https://portswigger.net/web-security/sql-injection/lab-retrieve-hidden-data
+
+**Résumé du lab:**
+```
+Objectif: Utiliser SQL injection pour afficher les produits non-publiés
+Vulnérabilité: Filtre de catégories vulnerable à SQLi
+Target: Modifier la requête pour afficher released = 0
+```
+
+**Étape 1: Reconnaissance**
+- [ ] Identification de la page de produits
+- [ ] Identification du paramètre vulnérable (category)
+- [ ] URL du filtre notée: ______________________
+
+**Étape 2: Test initial**
+- [ ] Testé: `?category=Electronics'`
+- [ ] Résultat: ______________________________
+- [ ] Erreur SQL détectée? [ ] OUI [ ] NON
+
+**Étape 3: Exploitation**
+```
+Première tentative:
+Payload: _______________________________
+Résultat: _______________________________
+
+Deuxième tentative:
+Payload: _______________________________
+Résultat: _______________________________
+
+Payload final réussi:
+Payload: _______________________________
+Explication: L'injection casse le WHERE original et ajoute une nouvelle condition
+```
+
+**Résultat final:**
+- [ ] Lab complété avec succès
+- [ ] Message de succès reçu
+
+**Réflexion post-lab:**
+```
+Q1: Pourquoi cette vulnérabilité existait?
+R: ________________________________________
+
+Q2: Comment un dev l'aurait prévenue?
+R: ________________________________________
+
+Q3: Peux-tu l'exploiter sur la colonne 'released' directement?
+R: ________________________________________
+
+Q4: Qu'est-ce que tu as appris?
+R: ________________________________________
+```
+
+**Compétences acquises:**
+```
+- [ ] Identifier un paramètre vulnérable
+- [ ] Tester avec une quote simple (break test)
+- [ ] Utiliser OR 1=1 pour retourner plus de données
+- [ ] Modifier un condition SQL via injection
+- [ ] Valider avec le message de succès du lab
+```
+
+---
+
+## ✅ CHECKPOINTS PHASE 1
+
+**Checkpoint 1 (Sem 1-2): Fondations**
+- [ ] Burp Suite configuré et fonctionnel
+- [ ] Proxy intercepte requêtes
+- [ ] Comprends HTTP/HTTPS
+- [ ] Comprends session vs token
+- [ ] Peux définir OWASP Top 10 (basiquement)
+- [ ] Score auto-évaluation: __/10
+
+**Checkpoint 2 (Sem 3): Première vulnérabilité**
+- [ ] Premier lab PortSwigger complété
+- [ ] Comprends SQL Injection basique
+- [ ] Peux expliquer l'erreur
+- [ ] Peux proposer une fix
+- [ ] Peux utiliser Burp Repeater couramment
+- [ ] Score auto-évaluation: __/10
+
+**Score Phase 1 Global:** __/10
+
+---
+
+# PHASE 2 : VULNÉRABILITÉS WEB
+
+## Semaine 4-5: SQL Injection Avancée
+
+### Lab #2: SQL Injection - Union-based
+
+**Statut:** ⏳ À faire  
+**Lien:** https://portswigger.net/web-security/sql-injection/union-based/lab-determine-number-of-columns
+
+**Résumé du lab:**
+```
+Objectif: Utiliser UNION pour extraire des données
+Difficulté: ⭐⭐ Intermédiaire
+Concept: D'abord trouver le nombre de colonnes
+```
+
+**Notes avant de commencer:**
+```
+Rappel UNION:
+- UNION combine 2 requêtes SELECT
+- Les colonnes doivent avoir le même nombre et type
+- Utile pour extraire des données non-visibles
+
+Étapes:
+1. Trouver le nombre de colonnes (ORDER BY technique)
+2. Utiliser NULL pour tester
+3. Construire le UNION query
+
+Payload de base:
+' UNION SELECT NULL, NULL, NULL--
+```
+
+**Progression:**
+- [ ] Étudié UNION en théorie
+- [ ] Testé sur site de test
+- [ ] Trouvé le nombre de colonnes
+- [ ] Construit la requête UNION
+- [ ] Extrait les données
+- [ ] Lab complété
+
+**Ma solution:**
+```
+Nombre de colonnes: ___
+Payload final: _____________________________
+Données extraites: _____________________________
+```
+
+---
+
+### Lab #3: SQL Injection - Error-based Blind
+
+**Statut:** ⏳ À faire  
+**Lien:** https://portswigger.net/web-security/sql-injection/blind/lab-conditional-errors
+
+---
+
+[Continuer avec les autres labs...]
+
+---
+
+# FICHE DE RÉVISION: SQL INJECTION
+
+**À remplir régulièrement**
+
+## Définition personnelle
+```
+SQL Injection c'est... [écris dans tes mots]
+_________________________________________________
+_________________________________________________
+```
+
+## 3 Types + Payloads
+
+```
+1. ERROR-BASED
+   Payload: ' OR 1=1--
+   Signe: ________________
+   Quand l'utiliser: ________________
+   
+2. UNION-BASED
+   Payload: ' UNION SELECT NULL, NULL, database()--
+   Signe: ________________
+   Quand l'utiliser: ________________
+   
+3. BLIND
+   Payload: ' AND SLEEP(5)--
+   Signe: ________________
+   Quand l'utiliser: ________________
+```
+
+## Comment tester
+
+```
+Ordre des tests (du + simple au + complexe):
+1. ________________
+2. ________________
+3. ________________
+4. ________________
+```
+
+## Comment fixer (IMPORTANT!)
+
+```
+❌ Mauvais: _________________________________
+✅ Bon: _________________________________
+
+Code exemple:
+_________________________________________________
+_________________________________________________
+```
+
+## Réal-world examples
+
+```
+Note ici des examples que tu as trouvés ou lus:
+
+Exemple 1: ________________
+Lien: ________________
+
+Exemple 2: ________________
+Lien: ________________
+```
+
+---
+
+# FICHE DE RÉVISION: XSS
+
+**À remplir après Semaine 6**
+
+## Définition personnelle
+```
+XSS c'est... [écris dans tes mots]
+_________________________________________________
+_________________________________________________
+```
+
+## 3 Types
+
+```
+1. REFLECTED
+   Principe: ________________
+   Payload: ________________
+   Danger: ________________
+   
+2. STORED
+   Principe: ________________
+   Payload: ________________
+   Danger: ________________
+   
+3. DOM-BASED
+   Principe: ________________
+   Payload: ________________
+   Danger: ________________
+```
+
+## Payloads courants
+
+```
+Simple alert: <img src=x onerror="alert('XSS')">
+Stealer de cookies: ________________
+KeyLogger: ________________
+Défacement: ________________
+```
+
+## Comment tester
+
+```
+1. Identifier les inputs (search, comments, etc.)
+2. Tester: ________________
+3. Analyser: ________________
+4. Exploiter: ________________
+```
+
+## Comment fixer
+
+```
+❌ Mauvais: element.innerHTML = userInput;
+✅ Bon: ________________
+
+Framework specifics (React, Vue):
+- React: ________________
+- Vue: ________________
+```
+
+---
+
+# FICHE DE RÉVISION: CSRF
+
+**À remplir après Semaine 7**
+
+## Définition personnelle
+```
+CSRF c'est... [écris dans tes mots]
+_________________________________________________
+```
+
+## Comment ça marche
+
+```
+Scénario d'attaque:
+1. ________________
+2. ________________
+3. ________________
+4. ________________
+
+Résultat: ________________
+```
+
+## Protection (IMPORTANTE!)
+
+```
+Protection 1: ________________
+Protection 2: ________________
+Protection 3: ________________
+```
+
+## Exemple réel
+
+```
+URL d'attaque: ________________
+Explique pourquoi ça marche: ________________
+```
+
+---
+
+# AUTO-ÉVALUATION FINALE (Remplir à la fin du plan)
+
+## Fondamentaux (Phase 1)
+
+```
+Peux-tu...
+
+1. Configurer Burp Suite seul?
+   [ ] Oui [ ] Partiellement [ ] Non
+   
+2. Expliquer HTTP/HTTPS/Sessions/Tokens?
+   [ ] Oui [ ] Partiellement [ ] Non
+   
+3. Naviguer couramment dans Proxy et Repeater?
+   [ ] Oui [ ] Partiellement [ ] Non
+   
+4. Définir OWASP Top 10?
+   [ ] Oui [ ] Partiellement [ ] Non
+
+Score Phase 1: __/4
+```
+
+## Vulnérabilités (Phase 2)
+
+```
+Peux-tu...
+
+1. Identifier et exploiter SQL Injection?
+   [ ] Oui [ ] Partiellement [ ] Non
+   
+2. Identifier et exploiter XSS?
+   [ ] Oui [ ] Partiellement [ ] Non
+   
+3. Identifier et exploiter CSRF?
+   [ ] Oui [ ] Partiellement [ ] Non
+   
+4. Identifier Broken Access Control?
+   [ ] Oui [ ] Partiellement [ ] Non
+   
+5. Utiliser Intruder pour brute force?
+   [ ] Oui [ ] Partiellement [ ] Non
+
+Score Phase 2: __/5
+```
+
+## Spécialisation (Phase 3)
+
+```
+Peux-tu...
+
+1. Exploiter XXE?
+   [ ] Oui [ ] Partiellement [ ] Non
+   
+2. Trouver et exploiter file upload flaws?
+   [ ] Oui [ ] Partiellement [ ] Non
+   
+3. Tester une API et trouver les flaws?
+   [ ] Oui [ ] Partiellement [ ] Non
+   
+4. Identifier business logic flaws?
+   [ ] Oui [ ] Partiellement [ ] Non
+   
+5. Utiliser Decoder et Comparer?
+   [ ] Oui [ ] Partiellement [ ] Non
+
+Score Phase 3: __/5
+```
+
+## Maîtrise (Phase 4)
+
+```
+Peux-tu...
+
+1. Faire un pentest complet seul en 6-8h?
+   [ ] Oui [ ] Partiellement [ ] Non
+   
+2. Écrire un rapport de pentest professionnel?
+   [ ] Oui [ ] Partiellement [ ] Non
+   
+3. Expliquer chaque vulnérabilité au client?
+   [ ] Oui [ ] Partiellement [ ] Non
+   
+4. Proposer des fixes code-level appropriées?
+   [ ] Oui [ ] Partiellement [ ] Non
+
+Score Phase 4: __/4
+
+SCORE GLOBAL: __ / 18
+Pourcentage: __%
+```
+
+---
+
+## Mon plus grand apprentissage
+```
+Durant ces 90 jours, mon plus grande découverte:
+_________________________________________________
+_________________________________________________
+_________________________________________________
+```
+
+## Prochaines étapes post-90j
+```
+Je veux maintenant:
+1. ___________________________________
+2. ___________________________________
+3. ___________________________________
+```
+
+---
+
+**Créé avec ❤️ par ton mentor pentest.**
