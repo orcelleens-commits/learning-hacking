@@ -1,0 +1,385 @@
+/**
+ * PENTEST LEARNING DASHBOARD - ARCHITECTURE GUIDE
+ * 
+ * This guide explains how the dashboard is structured and how to extend it.
+ * Read this before modifying the codebase.
+ */
+
+// ============================================================================
+// 1. DESIGN SYSTEM ORGANIZATION
+// ============================================================================
+
+/**
+ * The design system is split into 2 files for easy maintenance:
+ * 
+ * - design-system-colors.ts
+ *   └─ All color definitions and semantic color combinations
+ *   └─ Color modifier functions (lighten, darken, alpha)
+ * 
+ * - design-system-tokens.ts
+ *   └─ Spacing scale, typography, animations
+ *   └─ Border radius, sizes, breakpoints
+ *   └─ Style composition helpers
+ * 
+ * BENEFIT: Changing one value updates the entire app. No scattered hex colors.
+ */
+
+// HOW TO MODIFY:
+// 1. Change color: colors.ts → colors.primary = '#new-color'
+// 2. Change spacing: tokens.ts → spacing.md = '1.25rem'
+// 3. Change font size: tokens.ts → typography.h1.fontSize = '2.5rem'
+// All components automatically pick up the changes.
+
+// ============================================================================
+// 2. COMPONENT ARCHITECTURE
+// ============================================================================
+
+/**
+ * Components are organized by responsibility:
+ * 
+ * REUSABLE COMPONENTS (Low-level):
+ * - Card: Base container for all panels
+ * - StatCard: KPI with icon and value
+ * - ProgressBar: Visual progress indicator
+ * - Badge: Small label/tag component
+ * 
+ * COMPOSITE COMPONENTS (High-level):
+ * - Header: Welcome greeting
+ * - HeroStats: 4-column KPI section
+ * - ProgressSection: Learning progress indicators
+ * - LabsPanel: Active labs list
+ * - SkillsTracker: Skills proficiency grid
+ * - MilestonesTimeline: Phase milestones
+ * 
+ * LAYOUT COMPONENT:
+ * - PentestDashboard: Main container, widget orchestration
+ */
+
+// ============================================================================
+// 3. WIDGET SYSTEM (Extensibility)
+// ============================================================================
+
+/**
+ * The dashboard uses a widget-based architecture.
+ * Each section can be added/removed independently.
+ * 
+ * Current widgets in PentestDashboard:
+ */
+const widgetsExample = [
+  'hero-stats',      // KPI cards at the top
+  'progress',        // Learning progress bars
+  'labs',            // Active labs list
+  'skills',          // Skills proficiency
+  'milestones',      // Phase milestones
+];
+
+/**
+ * ADDING A NEW WIDGET:
+ * 
+ * 1. Create component function:
+ *    const MyNewWidget: React.FC<{data: any}> = ({data}) => (...)
+ * 
+ * 2. Add case to renderWidget():
+ *    case 'my-widget':
+ *      return <MyNewWidget key={widgetId} data={mockData} />
+ * 
+ * 3. Add to widgets array:
+ *    setWidgets([...widgets, 'my-widget'])
+ * 
+ * 4. Optional: Store widget order in localStorage
+ * 
+ * Example: Adding a "Recommended Labs" widget
+ * ─────────────────────────────────────────
+ * const RecommendedLabs: React.FC = () => (
+ *   <Card>
+ *     <h4>Recommended for You</h4>
+ *     {/* Show ML-recommended labs */}
+ *   </Card>
+ * )
+ * 
+ * widgets.push('recommended-labs')
+ * renderWidget('recommended-labs') → <RecommendedLabs />
+ */
+
+// ============================================================================
+// 4. DATA STRUCTURE
+// ============================================================================
+
+/**
+ * Mock data is centralized at the top of pentest-dashboard.tsx
+ * In production, this would come from your backend API.
+ */
+
+interface DashboardData {
+  userName: string;
+  currentPhase: number;
+  totalPhases: number;
+  labsCompleted: number;
+  labsTotal: number;
+  hoursSpent: number;
+  targetHours: number;
+  dayStreak: number;
+  weeklyGoal: number;
+  completedThisWeek: number;
+}
+
+interface Lab {
+  id: string;
+  name: string;
+  category: string;
+  difficulty: 'Beginner' | 'Intermediate' | 'Advanced';
+  status: 'completed' | 'in_progress' | 'locked';
+  progress: number;
+}
+
+interface Skill {
+  id: string;
+  name: string;
+  category: 'Burp Suite' | 'Methodology' | 'Vulnerability';
+  level: 'Beginner' | 'Intermediate' | 'Advanced' | 'Expert';
+}
+
+interface Milestone {
+  id: string;
+  title: string;
+  description: string;
+  dueDate: string;
+  completed: boolean;
+  phase: number;
+}
+
+/**
+ * TO USE REAL DATA:
+ * 1. Replace mockDashboardData with API call (useEffect)
+ * 2. Replace mockLabs, mockSkills, mockMilestones similarly
+ * 3. Add loading/error states
+ * 
+ * Example:
+ * const [data, setData] = useState<DashboardData | null>(null);
+ * useEffect(() => {
+ *   fetch('/api/dashboard/data')
+ *     .then(r => r.json())
+ *     .then(setData)
+ *     .catch(err => console.error(err));
+ * }, []);
+ */
+
+// ============================================================================
+// 5. STYLING PATTERNS
+// ============================================================================
+
+/**
+ * All components use inline styles with the design system tokens.
+ * This avoids CSS files and keeps styles co-located with components.
+ */
+
+// PATTERN 1: Using design system values
+const exampleStyle1 = {
+  padding: spacing.md,           // 16px
+  gap: spacing.lg,               // 24px
+  marginBottom: spacing.xxl,     // 48px
+};
+
+// PATTERN 2: Composing typography
+const exampleStyle2 = {
+  ...typography.h4,              // Includes fontSize, fontWeight, lineHeight
+  color: colors.text.primary,
+  marginBottom: spacing.md,
+};
+
+// PATTERN 3: Using semantic colors
+const exampleStyle3 = {
+  backgroundColor: colors.bg.secondary,
+  borderColor: colors.border,
+  color: colors.text.secondary,
+};
+
+// PATTERN 4: Conditional styling
+const exampleStyle4 = {
+  color: isCompleted ? colors.success : colors.warning,
+  backgroundColor: isSelected ? colors.bg.tertiary : 'transparent',
+};
+
+// ============================================================================
+// 6. COMMON MODIFICATIONS
+// ============================================================================
+
+/**
+ * CHANGE: Color scheme (Dark mode)
+ * ─────────────────────────────
+ * Create a second color set in colors.ts:
+ * export const colorsDark = { ... }
+ * 
+ * In PentestDashboard, detect theme:
+ * const isDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+ * const palette = isDark ? colorsDark : colors;
+ * 
+ * Pass to components:
+ * <Card colors={palette} />
+ */
+
+/**
+ * CHANGE: Add a new dashboard section
+ * ───────────────────────────────────
+ * 1. Create new component
+ * 2. Add widget ID to renderWidget()
+ * 3. Push to widgets array
+ * 4. The grid will automatically layout
+ */
+
+/**
+ * CHANGE: Modify grid layout
+ * ──────────────────────────
+ * Update the grid style in PentestDashboard:
+ * Current: gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))'
+ * 
+ * For 2 columns:  'repeat(2, 1fr)'
+ * For responsive: 'repeat(auto-fit, minmax(250px, 1fr))'
+ * For 3 columns:  'repeat(auto-fit, minmax(350px, 1fr))'
+ */
+
+/**
+ * CHANGE: Adjust spacing
+ * ──────────────────────
+ * All spacing uses spacing.* constants
+ * To increase padding everywhere:
+ * spacing.md: '1rem' → '1.25rem'
+ * 
+ * Only needs one change in design-system-tokens.ts
+ */
+
+// ============================================================================
+// 7. PERFORMANCE CONSIDERATIONS
+// ============================================================================
+
+/**
+ * Current optimizations:
+ * - Components are memoized where needed (StatCard, Badge)
+ * - Data is mock data (replace with real API calls)
+ * - No unnecessary re-renders (inline styles are OK for this scale)
+ * 
+ * For production:
+ * 1. Add React.memo() to heavy components
+ * 2. Use useCallback() for event handlers
+ * 3. Consider virtualization for long lists
+ * 4. Add pagination to labs/skills lists
+ * 5. Cache API responses
+ */
+
+// ============================================================================
+// 8. ACCESSIBILITY (a11y)
+// ============================================================================
+
+/**
+ * Current a11y features:
+ * - Semantic HTML structure (h1, h4, etc.)
+ * - Color contrast ratios meet WCAG AA
+ * - No color-only information (badges have text + color)
+ * 
+ * To improve:
+ * 1. Add aria-labels to interactive elements
+ * 2. Add role attributes where needed
+ * 3. Test with screen readers
+ * 4. Ensure keyboard navigation works
+ * 5. Add skip links for navigation
+ */
+
+// ============================================================================
+// 9. TESTING STRATEGY
+// ============================================================================
+
+/**
+ * Unit tests (Jest + React Testing Library):
+ * - Test StatCard renders with correct values
+ * - Test ProgressBar calculates percent correctly
+ * - Test Badge shows correct variant colors
+ * 
+ * Integration tests:
+ * - Test widget appears when added to widgets array
+ * - Test data updates reflect in UI
+ * - Test navigation between tabs/sections
+ * 
+ * Visual regression tests:
+ * - Ensure design system changes don't break layout
+ * - Verify spacing/alignment with screenshots
+ */
+
+// ============================================================================
+// 10. FILE STRUCTURE SUMMARY
+// ============================================================================
+
+/**
+ * pentest-dashboard.tsx
+ * ├── Design System Imports
+ * ├── Type Definitions (DashboardData, Lab, Skill, Milestone)
+ * ├── Mock Data (mockDashboardData, mockLabs, etc.)
+ * ├── Reusable Components
+ * │   ├── Card
+ * │   ├── StatCard
+ * │   ├── ProgressBar
+ * │   └── Badge
+ * ├── Composite Components
+ * │   ├── Header
+ * │   ├── HeroStats
+ * │   ├── ProgressSection
+ * │   ├── LabsPanel
+ * │   ├── SkillsTracker
+ * │   └── MilestonesTimeline
+ * └── Main Component (PentestDashboard)
+ * 
+ * design-system-colors.ts
+ * ├── Primary Palette (primary, success, warning, etc.)
+ * ├── Background Colors (primary, secondary, tertiary, dark)
+ * ├── Text Colors (primary, secondary, tertiary, light)
+ * ├── Border Colors
+ * ├── Gradients
+ * ├── Semantic Color Combinations (badges)
+ * ├── Shadows
+ * └── Color Modifier Functions
+ * 
+ * design-system-tokens.ts
+ * ├── Spacing Scale
+ * ├── Typography Scale
+ * ├── Animations
+ * ├── Transitions
+ * ├── Easing Functions
+ * ├── Border Radius
+ * ├── Sizes & Dimensions
+ * ├── Breakpoints
+ * └── Style Composition Helpers
+ */
+
+// ============================================================================
+// QUICK START: EXTENDING THE DASHBOARD
+// ============================================================================
+
+/**
+ * STEP 1: Define your widget data type
+ * ────────────────────────────────────
+ * interface MyWidgetData {
+ *   title: string;
+ *   value: number;
+ * }
+ * 
+ * STEP 2: Create the component
+ * ────────────────────────────
+ * const MyWidget: React.FC<{data: MyWidgetData}> = ({data}) => (
+ *   <Card>
+ *     <div style={{...typography.h4}}>{data.title}</div>
+ *     <div style={{...typography.h1}}>{data.value}</div>
+ *   </Card>
+ * )
+ * 
+ * STEP 3: Add to renderWidget()
+ * ──────────────────────────────
+ * case 'my-widget':
+ *   return <MyWidget key={widgetId} data={mockMyWidget} />
+ * 
+ * STEP 4: Add to widgets array
+ * ─────────────────────────────
+ * setWidgets([..., 'my-widget'])
+ * 
+ * DONE! ✓ Your widget is now part of the dashboard.
+ */
+
+export {};
