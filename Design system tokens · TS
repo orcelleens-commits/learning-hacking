@@ -1,0 +1,340 @@
+/**
+ * Design System: Spacing, Typography, Animations
+ * 
+ * This file contains reusable design tokens that ensure consistency
+ * across the entire application.
+ * 
+ * Modifying values here automatically updates the entire app.
+ */
+
+// ============================================================================
+// SPACING SCALE
+// ============================================================================
+/**
+ * Spacing scale based on 4px base unit
+ * Used for: margin, padding, gaps
+ * 
+ * Design Principle: 8-point grid system
+ * - Ensures consistent visual rhythm
+ * - Scales predictably
+ * - Easy to remember
+ */
+export const spacing = {
+  xs: '0.25rem',    // 4px - Minimal spacing
+  sm: '0.5rem',     // 8px - Small spacing
+  md: '1rem',       // 16px - Default spacing
+  lg: '1.5rem',     // 24px - Large spacing
+  xl: '2rem',       // 32px - Extra large
+  xxl: '3rem',      // 48px - Double extra large
+  xxxl: '4rem',     // 64px - Triple extra large
+} as const;
+
+// ============================================================================
+// TYPOGRAPHY SCALE
+// ============================================================================
+/**
+ * Typography system for consistent text styling
+ * 
+ * Design Principle: Hierarchy with 6 levels
+ * - Clear visual distinction between text types
+ * - Professional and readable
+ * - Scales from mobile to desktop
+ */
+export const typography = {
+  /** Main page title - 2rem / 32px */
+  h1: {
+    fontSize: '2rem',
+    fontWeight: '700' as const,
+    lineHeight: '1.2',
+    letterSpacing: '-0.01em',
+  },
+  
+  /** Section title - 1.5rem / 24px */
+  h2: {
+    fontSize: '1.5rem',
+    fontWeight: '600' as const,
+    lineHeight: '1.3',
+    letterSpacing: '-0.005em',
+  },
+  
+  /** Subsection title - 1.25rem / 20px */
+  h3: {
+    fontSize: '1.25rem',
+    fontWeight: '600' as const,
+    lineHeight: '1.4',
+  },
+  
+  /** Card/component title - 1rem / 16px */
+  h4: {
+    fontSize: '1rem',
+    fontWeight: '600' as const,
+    lineHeight: '1.5',
+  },
+  
+  /** Standard body text - 1rem / 16px */
+  body: {
+    fontSize: '1rem',
+    fontWeight: '400' as const,
+    lineHeight: '1.6',
+  },
+  
+  /** Smaller text - 0.875rem / 14px */
+  small: {
+    fontSize: '0.875rem',
+    fontWeight: '400' as const,
+    lineHeight: '1.5',
+  },
+  
+  /** Tiny labels - 0.75rem / 12px */
+  tiny: {
+    fontSize: '0.75rem',
+    fontWeight: '500' as const,
+    lineHeight: '1.4',
+    letterSpacing: '0.01em',
+  },
+  
+  /** Code/monospace text */
+  code: {
+    fontSize: '0.875rem',
+    fontWeight: '500' as const,
+    fontFamily: 'monospace',
+    lineHeight: '1.5',
+  },
+} as const;
+
+// ============================================================================
+// ANIMATIONS & TRANSITIONS
+// ============================================================================
+/**
+ * Animation presets for consistent motion
+ * 
+ * Design Principle: Subtle, purposeful animations
+ * - Durations: 200ms (quick), 300ms (standard), 500ms (slow)
+ * - Easing: ease (default), ease-in-out (smooth)
+ * - Reduces motion for accessibility
+ */
+export const animations = {
+  /** Quick fade in animation */
+  fadeIn: `
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(10px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+  `,
+  
+  /** Slide in from left */
+  slideInLeft: `
+    @keyframes slideInLeft {
+      from {
+        opacity: 0;
+        transform: translateX(-20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateX(0);
+      }
+    }
+  `,
+  
+  /** Slide in from right */
+  slideInRight: `
+    @keyframes slideInRight {
+      from {
+        opacity: 0;
+        transform: translateX(20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateX(0);
+      }
+    }
+  `,
+  
+  /** Subtle pulse effect */
+  pulse: `
+    @keyframes pulse {
+      0%, 100% {
+        opacity: 1;
+      }
+      50% {
+        opacity: 0.5;
+      }
+    }
+  `,
+  
+  /** Bounce animation */
+  bounce: `
+    @keyframes bounce {
+      0%, 100% {
+        transform: translateY(0);
+      }
+      50% {
+        transform: translateY(-10px);
+      }
+    }
+  `,
+  
+  /** Scale up animation */
+  scaleUp: `
+    @keyframes scaleUp {
+      from {
+        opacity: 0;
+        transform: scale(0.95);
+      }
+      to {
+        opacity: 1;
+        transform: scale(1);
+      }
+    }
+  `,
+} as const;
+
+// ============================================================================
+// TRANSITION DURATIONS
+// ============================================================================
+/**
+ * Standard transition durations for consistent timing
+ */
+export const transitions = {
+  /** Very quick: 150ms - Instant feedback */
+  fast: '150ms',
+  
+  /** Standard: 300ms - Default transitions */
+  normal: '300ms',
+  
+  /** Slow: 500ms - Important state changes */
+  slow: '500ms',
+} as const;
+
+// ============================================================================
+// EASING FUNCTIONS
+// ============================================================================
+/**
+ * Standard easing curves for animations
+ */
+export const easing = {
+  /** Default cubic-bezier for most animations */
+  standard: 'cubic-bezier(0.4, 0, 0.2, 1)',
+  
+  /** Ease in animation */
+  easeIn: 'cubic-bezier(0.4, 0, 1, 1)',
+  
+  /** Ease out animation */
+  easeOut: 'cubic-bezier(0, 0, 0.2, 1)',
+  
+  /** Ease in and out */
+  easeInOut: 'cubic-bezier(0.4, 0, 0.2, 1)',
+  
+  /** Bouncy animation */
+  bouncy: 'cubic-bezier(0.34, 1.56, 0.64, 1)',
+} as const;
+
+// ============================================================================
+// BORDER RADIUS
+// ============================================================================
+/**
+ * Border radius scale for consistent roundedness
+ */
+export const borderRadius = {
+  none: '0',
+  sm: '0.375rem',    // 6px - Small, tight corners
+  md: '0.5rem',      // 8px - Default, standard corners
+  lg: '0.75rem',     // 12px - Larger, friendly corners
+  xl: '1rem',        // 16px - Extra large
+  full: '9999px',    // Fully rounded (circles, pills)
+} as const;
+
+// ============================================================================
+// SIZES & DIMENSIONS
+// ============================================================================
+/**
+ * Common component sizes for consistency
+ */
+export const sizes = {
+  /** Icon sizes */
+  icon: {
+    sm: '16px',
+    md: '20px',
+    lg: '24px',
+    xl: '32px',
+  },
+  
+  /** Button heights */
+  button: {
+    sm: '32px',
+    md: '36px',
+    lg: '40px',
+    xl: '44px',
+  },
+  
+  /** Input heights */
+  input: {
+    sm: '32px',
+    md: '36px',
+    lg: '40px',
+  },
+  
+  /** Max width for content containers */
+  container: {
+    sm: '640px',
+    md: '768px',
+    lg: '1024px',
+    xl: '1280px',
+  },
+} as const;
+
+// ============================================================================
+// BREAKPOINTS
+// ============================================================================
+/**
+ * Responsive design breakpoints (Mobile-first approach)
+ */
+export const breakpoints = {
+  mobile: '0px',
+  tablet: '640px',
+  desktop: '1024px',
+  wide: '1280px',
+  ultrawide: '1536px',
+} as const;
+
+// ============================================================================
+// COMPOSITION HELPERS
+// ============================================================================
+/**
+ * Ready-to-use style combinations
+ */
+export const styleCompositions = {
+  /** Flex center - both axes */
+  flexCenter: {
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  
+  /** Flex column center */
+  flexCenterColumn: {
+    display: 'flex',
+    flexDirection: 'column' as const,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  
+  /** Truncate text with ellipsis */
+  truncateText: {
+    whiteSpace: 'nowrap' as const,
+    overflow: 'hidden',
+    textOverflow: 'ellipsis',
+  },
+  
+  /** Clear text selection */
+  noSelect: {
+    userSelect: 'none' as const,
+    WebkitUserSelect: 'none' as const,
+  },
+} as const;
