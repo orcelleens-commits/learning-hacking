@@ -1,0 +1,5 @@
+./components/dashboard/pentest-dashboard
+@tanstack/react-query
+zustand
+@testing-library/react
+@testing-library/user-event
