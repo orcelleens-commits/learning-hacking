@@ -1,0 +1,561 @@
+# 🎯 Pentest Learning Dashboard
+
+A professional, production-ready learning management dashboard built for mastering Web Security and Penetration Testing. Designed with a senior engineering mindset for maintainability and extensibility.
+
+## 📊 Features
+
+✅ **Real-time Progress Tracking**
+- Phase completion percentage
+- Lab mastery tracking (0-100%)
+- Learning hours logged
+- Consecutive day streaks
+
+✅ **Comprehensive Dashboard Widgets**
+- Hero stats (KPIs at a glance)
+- Learning progress indicators
+- Active labs panel with difficulty badges
+- Skills proficiency tracker
+- Phase milestones timeline
+
+✅ **Professional Design**
+- Security-focused color palette (Indigo, Emerald, Red)
+- WCAG AA compliant contrast ratios
+- Responsive grid layout (mobile → desktop)
+- Semantic color usage (success, warning, danger)
+
+✅ **Developer-Friendly Architecture**
+- Centralized design system (no scattered colors/spacing)
+- Reusable component library
+- Widget-based extensibility (add/remove/reorder)
+- TypeScript with strict typing
+- Well-documented code patterns
+
+## 🚀 Quick Start
+
+### Installation
+
+```bash
+# Copy the files to your React project
+cp pentest-dashboard.tsx src/components/dashboard/
+cp design-system-colors.ts src/styles/
+cp design-system-tokens.ts src/styles/
+cp ARCHITECTURE-GUIDE.ts src/docs/
+
+# Install dependencies (if not already installed)
+npm install react lucide-react
+```
+
+### Basic Usage
+
+```tsx
+import PentestDashboard from './components/dashboard/pentest-dashboard';
+
+export default function App() {
+  return <PentestDashboard />;
+}
+```
+
+### Connecting Real Data
+
+Replace mock data with your API:
+
+```tsx
+// In PentestDashboard component
+const [dashboardData, setDashboardData] = useState<DashboardData | null>(null);
+
+useEffect(() => {
+  fetch('/api/dashboard/data')
+    .then(r => r.json())
+    .then(data => {
+      setDashboardData(data);
+      // Also fetch labs, skills, milestones
+    })
+    .catch(err => console.error('Failed to load dashboard data:', err));
+}, []);
+
+if (!dashboardData) return <div>Loading...</div>;
+return <HeroStats data={dashboardData} />;
+```
+
+## 📐 Design System
+
+### Colors
+
+Change the entire color scheme in one file:
+
+```tsx
+// src/styles/design-system-colors.ts
+export const colors = {
+  primary: '#6366f1',      // Change here...
+  success: '#10b981',      // ...updates everywhere
+  // ...
+};
+```
+
+**Semantic Colors:**
+- `primary` - Main actions, highlights
+- `success` - Completed tasks
+- `warning` - In-progress items
+- `danger` - Vulnerabilities, errors
+- `info` - Informational content
+
+### Spacing
+
+8-point grid system:
+
+```tsx
+spacing.xs    // 4px
+spacing.sm    // 8px
+spacing.md    // 16px (default)
+spacing.lg    // 24px
+spacing.xl    // 32px
+spacing.xxl   // 48px
+```
+
+**Usage:**
+```tsx
+<div style={{ padding: spacing.md, gap: spacing.lg }}>
+```
+
+### Typography
+
+6-level hierarchy:
+
+```tsx
+typography.h1    // 2rem - Main page title
+typography.h2    // 1.5rem - Section title
+typography.h3    // 1.25rem - Subsection
+typography.h4    // 1rem - Card title
+typography.body  // 1rem - Body text
+typography.small // 0.875rem - Secondary text
+typography.tiny  // 0.75rem - Labels
+```
+
+## 🧩 Components
+
+### Reusable Components
+
+#### Card
+Base container for all panels.
+
+```tsx
+<Card>
+  <h3>My Content</h3>
+</Card>
+```
+
+#### StatCard
+Displays a metric with icon and value.
+
+```tsx
+<StatCard
+  icon={<Target />}
+  label="Labs Completed"
+  value={12}
+  subtext="Out of 40 total"
+  color={colors.success}
+/>
+```
+
+#### ProgressBar
+Visual progress indicator.
+
+```tsx
+<ProgressBar
+  value={12}
+  max={40}
+  color={colors.primary}
+  showPercent={true}
+/>
+```
+
+#### Badge
+Small label component.
+
+```tsx
+<Badge label="Intermediate" variant="warning" size="sm" />
+```
+
+### Composite Components
+
+#### HeroStats
+KPI cards section.
+
+```tsx
+<HeroStats data={mockDashboardData} />
+```
+
+#### LabsPanel
+Active labs list with progress.
+
+```tsx
+<LabsPanel labs={mockLabs} />
+```
+
+#### SkillsTracker
+Skills proficiency grid.
+
+```tsx
+<SkillsTracker skills={mockSkills} />
+```
+
+#### MilestonesTimeline
+Phase milestones with completion status.
+
+```tsx
+<MilestonesTimeline milestones={mockMilestones} />
+```
+
+## 📦 Widget System
+
+The dashboard uses widgets that can be dynamically added/removed.
+
+### Current Widgets
+
+```tsx
+const widgets = [
+  'hero-stats',      // KPI cards
+  'progress',        // Learning progress
+  'labs',            // Active labs
+  'skills',          // Skills tracker
+  'milestones',      // Phase milestones
+];
+```
+
+### Adding a Custom Widget
+
+1. **Create the component:**
+
+```tsx
+interface MyWidgetData {
+  title: string;
+  data: string[];
+}
+
+const MyCustomWidget: React.FC<{data: MyWidgetData}> = ({data}) => (
+  <Card>
+    <div style={{...typography.h4, color: colors.text.primary}}>
+      {data.title}
+    </div>
+    <ul>
+      {data.data.map(item => (
+        <li key={item}>{item}</li>
+      ))}
+    </ul>
+  </Card>
+);
+```
+
+2. **Add mock data:**
+
+```tsx
+const mockMyWidget: MyWidgetData = {
+  title: 'My Custom Widget',
+  data: ['Item 1', 'Item 2', 'Item 3'],
+};
+```
+
+3. **Add to renderWidget():**
+
+```tsx
+case 'my-widget':
+  return <MyCustomWidget key={widgetId} data={mockMyWidget} />;
+```
+
+4. **Add to widgets array:**
+
+```tsx
+const [widgets, setWidgets] = useState<string[]>([
+  'hero-stats',
+  'progress',
+  'labs',
+  'skills',
+  'milestones',
+  'my-widget',  // ← Add here
+]);
+```
+
+### Reordering Widgets
+
+```tsx
+// Drag and drop implementation (example)
+const moveWidget = (fromIndex: number, toIndex: number) => {
+  const newWidgets = [...widgets];
+  const [movedWidget] = newWidgets.splice(fromIndex, 1);
+  newWidgets.splice(toIndex, 0, movedWidget);
+  setWidgets(newWidgets);
+  
+  // Save to localStorage
+  localStorage.setItem('dashboardWidgets', JSON.stringify(newWidgets));
+};
+```
+
+## 🎨 Customization Examples
+
+### Change Primary Color
+
+```tsx
+// design-system-colors.ts
+colors.primary = '#8b5cf6';  // Purple instead of Indigo
+
+// Automatically updates:
+// - Buttons, links, primary actions
+// - Icon backgrounds
+// - Progress indicators
+// - Primary badges
+```
+
+### Adjust Spacing
+
+```tsx
+// design-system-tokens.ts
+spacing.md = '1.25rem';  // 16px → 20px
+
+// Updates:
+// - All padding
+// - All gaps
+// - All margins
+// Throughout the entire app
+```
+
+### Modify Typography
+
+```tsx
+// design-system-tokens.ts
+typography.h1 = {
+  fontSize: '2.5rem',      // Larger headings
+  fontWeight: '700',
+  lineHeight: '1.2',
+};
+```
+
+### Dark Mode Implementation
+
+```tsx
+const PentestDashboard: React.FC = () => {
+  const isDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+  
+  const darkColors = { ...colors };
+  darkColors.bg.primary = '#1f2937';
+  darkColors.text.primary = '#f9fafb';
+  // ... map all colors for dark mode
+  
+  const palette = isDark ? darkColors : colors;
+  
+  return (
+    <div style={{ backgroundColor: palette.bg.primary }}>
+      {/* Use palette instead of colors */}
+    </div>
+  );
+};
+```
+
+## 🏗️ Project Structure
+
+```
+src/
+├── components/
+│   └── dashboard/
+│       └── pentest-dashboard.tsx       # Main dashboard component
+├── styles/
+│   ├── design-system-colors.ts         # Color palette & helpers
+│   └── design-system-tokens.ts         # Spacing, typography, animations
+└── docs/
+    └── ARCHITECTURE-GUIDE.ts           # This guide
+```
+
+## 📊 Data Structures
+
+### DashboardData
+
+```tsx
+interface DashboardData {
+  userName: string;
+  currentPhase: number;
+  totalPhases: number;
+  labsCompleted: number;
+  labsTotal: number;
+  hoursSpent: number;
+  targetHours: number;
+  dayStreak: number;
+  weeklyGoal: number;
+  completedThisWeek: number;
+}
+```
+
+### Lab
+
+```tsx
+interface Lab {
+  id: string;
+  name: string;
+  category: string;
+  difficulty: 'Beginner' | 'Intermediate' | 'Advanced';
+  status: 'completed' | 'in_progress' | 'locked';
+  progress: number; // 0-100
+}
+```
+
+### Skill
+
+```tsx
+interface Skill {
+  id: string;
+  name: string;
+  category: 'Burp Suite' | 'Methodology' | 'Vulnerability';
+  level: 'Beginner' | 'Intermediate' | 'Advanced' | 'Expert';
+}
+```
+
+### Milestone
+
+```tsx
+interface Milestone {
+  id: string;
+  title: string;
+  description: string;
+  dueDate: string;
+  completed: boolean;
+  phase: number;
+}
+```
+
+## 🔧 Advanced Usage
+
+### State Management Integration
+
+```tsx
+// With Redux
+import { useSelector, useDispatch } from 'react-redux';
+
+const PentestDashboard: React.FC = () => {
+  const dashboardData = useSelector(state => state.dashboard.data);
+  const labs = useSelector(state => state.dashboard.labs);
+  
+  return <HeroStats data={dashboardData} />;
+};
+```
+
+### API Integration
+
+```tsx
+// With React Query
+import { useQuery } from '@tanstack/react-query';
+
+const { data: dashboardData, isLoading } = useQuery({
+  queryKey: ['dashboard'],
+  queryFn: async () => {
+    const res = await fetch('/api/dashboard');
+    return res.json();
+  },
+});
+```
+
+### Performance Optimization
+
+```tsx
+// Memoize expensive components
+const MemoizedLabsPanel = React.memo(LabsPanel, (prevProps, nextProps) => {
+  return prevProps.labs === nextProps.labs;
+});
+```
+
+## 📱 Responsive Design
+
+The dashboard uses a responsive grid:
+
+```tsx
+style={{
+  display: 'grid',
+  gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
+  gap: spacing.xl,
+}}
+```
+
+**Behavior:**
+- 4 columns on ultra-wide screens (1536px+)
+- 3 columns on desktop (1024px+)
+- 2 columns on tablet (640px+)
+- 1 column on mobile (< 640px)
+
+## 🧪 Testing
+
+### Unit Test Example
+
+```tsx
+import { render, screen } from '@testing-library/react';
+import { StatCard } from './pentest-dashboard';
+
+describe('StatCard', () => {
+  it('renders the label and value', () => {
+    render(
+      <StatCard
+        icon={<div />}
+        label="Test Label"
+        value={42}
+      />
+    );
+    
+    expect(screen.getByText('Test Label')).toBeInTheDocument();
+    expect(screen.getByText('42')).toBeInTheDocument();
+  });
+});
+```
+
+## ♿ Accessibility
+
+The dashboard meets WCAG AA standards:
+
+- ✅ Color contrast ratios (4.5:1 for normal text)
+- ✅ Semantic HTML structure
+- ✅ No color-only information
+- ✅ Proper heading hierarchy
+- ✅ Icon labels and alt text
+
+To improve further:
+- Add `aria-label` to interactive elements
+- Add `role` attributes where needed
+- Test with screen readers
+- Ensure keyboard navigation
+
+## 🐛 Troubleshooting
+
+### Colors not updating?
+- Clear browser cache
+- Check design-system-colors.ts is imported
+- Verify color values are valid hex codes
+
+### Layout broken on mobile?
+- Check gridTemplateColumns responsive settings
+- Ensure minmax() breakpoints match your design
+- Test in DevTools mobile view
+
+### Performance issues?
+- Check for unnecessary re-renders (React DevTools Profiler)
+- Memoize heavy components
+- Lazy load large lists
+- Optimize API calls
+
+## 📚 Further Reading
+
+- React Components: https://react.dev/learn/components
+- Design Systems: https://www.nngroup.com/articles/design-systems-101/
+- WCAG Accessibility: https://www.w3.org/WAI/WCAG21/quickref/
+
+## 📝 License
+
+MIT License - Use freely in your projects
+
+## 🤝 Contributing
+
+Found a bug or want to improve this? 
+
+1. Fork the repository
+2. Create a feature branch
+3. Submit a pull request
+
+---
+
+**Built with ❤️ for aspiring pentesters and security professionals.**
+
+The design system and component architecture support 5+ years of maintenance by senior engineering teams. Extend it confidently.
