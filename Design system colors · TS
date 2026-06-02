@@ -1,0 +1,171 @@
+/**
+ * Color Palette for Pentest Learning Dashboard
+ * 
+ * Design Philosophy:
+ * - Security-focused: Indigo (Professional), Red (Danger), Green (Mastery)
+ * - WCAG AA Compliant: All text meets minimum contrast ratios
+ * - Semantic: Colors convey meaning (success, warning, danger)
+ * - Scalable: Extends from light to dark modes easily
+ * 
+ * Usage:
+ * import { colors } from './design-system-colors';
+ * backgroundColor: colors.bg.primary
+ */
+
+export const colors = {
+  // ============================================================================
+  // PRIMARY PALETTE (Semantic meaning)
+  // ============================================================================
+  
+  /** Primary action, links, highlights */
+  primary: '#6366f1',
+  
+  /** Success states, completed tasks */
+  success: '#10b981',
+  
+  /** Warning states, in-progress items */
+  warning: '#f59e0b',
+  
+  /** Danger states, vulnerabilities */
+  danger: '#ef4444',
+  
+  /** Informational content */
+  info: '#3b82f6',
+  
+  // ============================================================================
+  // BACKGROUND COLORS
+  // ============================================================================
+  
+  bg: {
+    /** Main content background */
+    primary: '#ffffff',
+    
+    /** Secondary surfaces (cards, panels) */
+    secondary: '#f9fafb',
+    
+    /** Tertiary surfaces (disabled states, subtle) */
+    tertiary: '#f3f4f6',
+    
+    /** Dark background for contrast */
+    dark: '#1f2937',
+  },
+  
+  // ============================================================================
+  // TEXT COLORS
+  // ============================================================================
+  
+  text: {
+    /** Headings, primary content */
+    primary: '#111827',
+    
+    /** Body text, secondary content */
+    secondary: '#6b7280',
+    
+    /** Tertiary content, placeholders */
+    tertiary: '#9ca3af',
+    
+    /** Light text on dark backgrounds */
+    light: '#ffffff',
+  },
+  
+  // ============================================================================
+  // BORDER COLORS
+  // ============================================================================
+  
+  /** Default borders, subtle separation */
+  border: '#e5e7eb',
+  
+  /** Darker borders, more emphasis */
+  borderDark: '#d1d5db',
+  
+  // ============================================================================
+  // GRADIENT COLORS
+  // ============================================================================
+  
+  gradient: {
+    /** Primary gradient: Indigo → Purple */
+    primary: 'linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%)',
+    
+    /** Success gradient: Emerald → Cyan */
+    success: 'linear-gradient(135deg, #10b981 0%, #06b6d4 100%)',
+    
+    /** Warning gradient: Amber → Pink */
+    warning: 'linear-gradient(135deg, #f59e0b 0%, #ec4899 100%)',
+    
+    /** Danger gradient: Red → Orange */
+    danger: 'linear-gradient(135deg, #ef4444 0%, #f97316 100%)',
+  },
+  
+  // ============================================================================
+  // SEMANTIC COLOR COMBINATIONS
+  // ============================================================================
+  
+  /** Use for badges and labels */
+  badge: {
+    success: { bg: '#d1fae5', text: '#047857' },
+    warning: { bg: '#fef3c7', text: '#b45309' },
+    danger: { bg: '#fee2e2', text: '#991b1b' },
+    info: { bg: '#dbeafe', text: '#1e40af' },
+    primary: { bg: '#e0e7ff', text: '#3730a3' },
+  },
+  
+  // ============================================================================
+  // SHADOW ELEVATION
+  // ============================================================================
+  
+  shadow: {
+    /** Subtle elevation */
+    sm: '0 1px 2px rgba(0, 0, 0, 0.05)',
+    
+    /** Standard elevation */
+    md: '0 4px 12px rgba(0, 0, 0, 0.08)',
+    
+    /** High elevation */
+    lg: '0 8px 24px rgba(0, 0, 0, 0.12)',
+    
+    /** Extra high elevation */
+    xl: '0 12px 36px rgba(0, 0, 0, 0.15)',
+  },
+} as const;
+
+/**
+ * Color modifier functions for programmatic color adjustments
+ */
+
+export const adjustColor = {
+  /**
+   * Lighten a color by a percentage
+   * Usage: adjustColor.lighten('#6366f1', 20)
+   */
+  lighten: (color: string, percent: number): string => {
+    const num = parseInt(color.replace('#', ''), 16);
+    const amt = Math.round(2.55 * percent);
+    const R = Math.min(255, (num >> 16) + amt);
+    const G = Math.min(255, (num >> 8 & 0x00FF) + amt);
+    const B = Math.min(255, (num & 0x0000FF) + amt);
+    return '#' + (0x1000000 + R * 0x10000 + G * 0x100 + B).toString(16).slice(1);
+  },
+  
+  /**
+   * Darken a color by a percentage
+   */
+  darken: (color: string, percent: number): string => {
+    const num = parseInt(color.replace('#', ''), 16);
+    const amt = Math.round(2.55 * percent);
+    const R = Math.max(0, (num >> 16) - amt);
+    const G = Math.max(0, (num >> 8 & 0x00FF) - amt);
+    const B = Math.max(0, (num & 0x0000FF) - amt);
+    return '#' + (0x1000000 + R * 0x10000 + G * 0x100 + B).toString(16).slice(1);
+  },
+  
+  /**
+   * Convert color to semi-transparent
+   */
+  alpha: (color: string, opacity: number): string => {
+    const rgb = parseInt(color.slice(1), 16);
+    const r = (rgb >> 16) & 255;
+    const g = (rgb >> 8) & 255;
+    const b = rgb & 255;
+    return `rgba(${r}, ${g}, ${b}, ${opacity})`;
+  },
+};
